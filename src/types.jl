@@ -101,6 +101,11 @@ struct Events
     Whether the mouse is inside the window or not.
     """
     entered_window::Observable{Bool}
+    """
+    The position of the joystick axes as an `Array{Float64}`.
+    Updates once per event poll/frame.
+    """
+    joystickaxes::Observable{Vector{Float64}}
 end
 
 function Base.show(io::IO, events::Events)
@@ -130,6 +135,7 @@ function Events()
         Observable(String[]),
         Observable(false),
         Observable(false),
+        Observable(Float64[]),
     )
 
     connect_states!(events)

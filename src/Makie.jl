@@ -242,7 +242,8 @@ export mouseover, onpick, pick, Events, Keyboard, Mouse, mouse_selection, is_mou
 export ispressed, Exclusively
 export connect_screen
 export window_area, window_open, mouse_buttons, mouse_position, mouseposition_px,
-       scroll, keyboard_buttons, unicode_input, dropped_files, hasfocus, entered_window
+       scroll, keyboard_buttons, unicode_input, dropped_files, hasfocus, entered_window,
+       joystick_axes
 export disconnect!
 export DataInspector
 export Consume

@@ -10,6 +10,7 @@ unicode_input(scene, native_window) = not_implemented_for(native_window)
 dropped_files(scene, native_window) = not_implemented_for(native_window)
 hasfocus(scene, native_window) = not_implemented_for(native_window)
 entered_window(scene, native_window) = not_implemented_for(native_window)
+joystick_axes(scene, native_window) = not_implemented_for(native_window)
 
 function connect_screen(scene::Scene, screen)
 
@@ -27,6 +28,7 @@ function connect_screen(scene::Scene, screen)
     dropped_files(scene, screen)
     hasfocus(scene, screen)
     entered_window(scene, screen)
+    joystick_axes(scene, screen)
 
     return
 end

@@ -300,3 +300,37 @@ end
 function Makie.disconnect!(window::GLFW.Window, ::typeof(entered_window))
     GLFW.SetCursorEnterCallback(window, nothing)
 end
+
+struct JoystickAxesUpdater
+    jid::Cint
+    joystickaxes::Observable{Vector{Float64}}
+end
+
+function (p::JoystickAxesUpdater)(::Nothing)
+    axes = GLFW.GetJoystickAxes(GLFW.Joystick(p.jid))
+    p.joystickaxes[] = axes
+    return
+end
+
+"""
+Registers a callback for the mouse cursor position.
+returns an `Observable{Vec{2, Float64}}`,
+which is not in scene coordinates, with the upper left window corner being 0
+[GLFW Docs](http://www.glfw.org/docs/latest/group__input.html#ga1e008c7a8751cea648c8f42cc91104cf)
+"""
+function Makie.joystick_axes(scene::Scene, screen::Screen)
+    disconnect!(screen, joystick_axes)
+    updater = JoystickAxesUpdater(
+        1, scene.events.joystickaxes
+    )
+    on(updater, screen.render_tick)
+    return
+end
+function Makie.disconnect!(screen::Screen, ::typeof(joystick_axes))
+    filter!(p -> !isa(p[2], JoystickAxesUpdater), screen.render_tick.listeners)
+    return
+end
+function Makie.disconnect!(window::GLFW.Window, ::typeof(joystick_axes))
+    error("disconnect!(::Screen, ::joystick_axes) should be called instead of disconnect!(::GLFW.Window, ::joystick_axes)!")
+    nothing
+end
