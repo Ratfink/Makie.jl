@@ -105,7 +105,7 @@ struct Events
     The position of the joystick axes as an `Array{Float64}`.
     Updates once per event poll/frame.
     """
-    joystickaxes::Observable{Vector{Float64}}
+    joystickaxes::Vector{Observable{Union{Nothing, Vector{Float64}}}}
 end
 
 function Base.show(io::IO, events::Events)
@@ -135,7 +135,14 @@ function Events()
         Observable(String[]),
         Observable(false),
         Observable(false),
-        Observable(Float64[]),
+        [Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing),
+         Observable{Union{Nothing, Vector{Float64}}}(nothing), Observable{Union{Nothing, Vector{Float64}}}(nothing)],
     )
 
     connect_states!(events)
@@ -151,8 +158,7 @@ function connect_states!(e::Events)
             delete!(set, event.button)
         else
             error("Unrecognized Keyboard action $(event.action)")
-        end
-        # This never consumes because it just keeps track of the state
+        end # This never consumes because it just keeps track of the state
         return Consume(false)
     end
 

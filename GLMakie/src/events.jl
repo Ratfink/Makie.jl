@@ -302,12 +302,12 @@ function Makie.disconnect!(window::GLFW.Window, ::typeof(entered_window))
 end
 
 struct JoystickAxesUpdater
-    jid::Cint
-    joystickaxes::Observable{Vector{Float64}}
+    jid::GLFW.Joystick
+    joystickaxes::Observable{Union{Nothing, Vector{Float64}}}
 end
 
 function (p::JoystickAxesUpdater)(::Nothing)
-    axes = GLFW.GetJoystickAxes(GLFW.Joystick(p.jid))
+    axes = GLFW.GetJoystickAxes(p.jid)
     p.joystickaxes[] = axes
     return
 end
@@ -320,10 +320,12 @@ which is not in scene coordinates, with the upper left window corner being 0
 """
 function Makie.joystick_axes(scene::Scene, screen::Screen)
     disconnect!(screen, joystick_axes)
-    updater = JoystickAxesUpdater(
-        1, scene.events.joystickaxes
-    )
-    on(updater, screen.render_tick)
+    for jid in instances(GLFW.Joystick)
+        updater = JoystickAxesUpdater(
+            jid, scene.events.joystickaxes[Int(jid)+1]
+        )
+        on(updater, screen.render_tick)
+    end
     return
 end
 function Makie.disconnect!(screen::Screen, ::typeof(joystick_axes))
